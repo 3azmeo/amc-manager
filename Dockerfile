@@ -14,5 +14,5 @@ COPY main.py .
 # Ensure the data directory exists
 RUN mkdir -p /data
 
-# Run the script
+# Run the script with unbuffered output to see logs immediately
 CMD ["python", "-u", "main.py"]
