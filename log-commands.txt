@@ -1,0 +1,12 @@
+# This command fetches the logs and pipes (|) them to 'grep'
+# 'grep -E' searches for multiple keywords: PUT, POST, UPDATE, or CREATE
+docker logs amc-manager | grep -E "PUT|POST|UPDATE|CREATE"
+
+# This searches the logs specifically for the AdvancedQueue module
+docker logs amc-manager | grep "AdvancedQueue"
+
+# This filters out all INFO messages and only shows WARNINGs and ERRORs
+docker logs amc-manager | grep -E "ERROR|WARNING"
+
+# The '-f' flag follows the log live, and grep filters the output in real-time
+docker logs -f amc-manager | grep -i "overlord"

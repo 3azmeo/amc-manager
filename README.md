@@ -29,7 +29,7 @@ Most Arr applications (Sonarr/Radarr) are great at grabbing releases, but they s
 * **Smart Removal:** When a torrent is removed, the tool tells Sonarr/Radarr to **Blacklist** the release and triggers a **Redownload** of a different release automatically.
 * **Private Tracker Awareness:**
     * **Auto-Tagging:** Can distinguish between Public and Private torrents.
-    * **Safety Mode:** Private torrents are **NEVER deleted** by default. Instead, they are tagged as `amc_obsolete` so you can manage them manually (preserving your ratio).
+    * **Safety Mode:** Private torrents are **NEVER deleted** by default. Instead, they are tagged as `private-trackers` so you can manage them manually (preserving your ratio).
 * **Rules Engine:**
     * Removes **Stalled** downloads (0 seeds).
     * Removes **Slow** downloads (below a specific speed limit).
@@ -165,7 +165,7 @@ The Cleaner uses a **Strike System**. It does not delete a torrent the first tim
 
 #### Action Logic:
 * **Public Torrent:** The torrent is removed from qBittorrent and the files are deleted. Sonarr/Radarr is notified to **Blocklist** the release and search for a new one.
-* **Private Torrent:** If the torrent has one of the `PRIVATE_TRACKER_TAGS`, it is **NOT DELETED**. Instead, it is tagged with `amc_obsolete`. You can then filter by this tag in qBittorrent and decide what to do manually.
+* **Private Torrent:** If the torrent has one of the `PRIVATE_TRACKER_TAGS`, it is **NOT DELETED**. Instead, it is tagged with `private-trackers`. You can then filter by this tag in qBittorrent and decide what to do manually.
 
 ### Supported Applications
 * **Sonarr** (TV Shows) - Fully Supported (Search + Clean)

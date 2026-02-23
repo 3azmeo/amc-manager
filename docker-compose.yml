@@ -1,92 +1,32 @@
 services:
-  arr-missing-content:
-    image: 3azmeo/arr-missing-content:latest
-    container_name: arr-missing-content
+  amc-manager:
+    image: 3azmeo/amc-manager:latest
+    container_name: amc-manager
     restart: unless-stopped
     networks:
       - arr-stack-network
     volumes:
-      - ./data:/data
+      - ./data/amc-manager:/config
+      - /slow/media:/data
     environment:
-      - LOG_LEVEL=INFO
-      - TZ=Asia/Kuwait
-      
-      # --- General Scheduling ---
-      # Runs the search for missing content every X minutes
-      - RUN_EVERY=15
-      # Runs the qBittorrent cleaner/monitor every X minutes
-      - TORRENT_HANDLING_TIMER=20
-      
-      # --- Searcher Throttling ---
-      # How many seconds to wait between each API search call (Anti-Ban)
-      - REQUEST_DELAY_SECONDS=5
-      # Force a full database reset (restart cycle) after X days
-      - MAX_CYCLE_DAYS=30
-      
       # --- qBittorrent Connection ---
       # Use glueutn address if running through VPN
       - QBITTORRENT_URL=${QBITTORRENT_URL}
       - QBITTORRENT_USERNAME=${QBITTORRENT_USERNAME}
       - QBITTORRENT_PASSWORD=${QBITTORRENT_PASSWORD}
       
-      # --- Cleaner: Feature Toggles (true/false) ---
-      # Master switch for the cleaner module
-      - ENABLE_TORRENT_HANDLING=true
-      # If true, it will NOT delete anything, just log what it WOULD do
-      - DRY_RUN=true
-      
-      # Remove torrents with bad files or error states
-      - TORRENT_HANDLING_REMOVE_BAD_FILES=true
-      - TORRENT_HANDLING_REMOVE_FAILED_DOWNLOAD=true
-      # Remove torrents stuck at "Downloading Metadata"
-      - TORRENT_HANDLING_REMOVE_METADATA_MISSING=true
-      # Remove torrents with 0 seeds (Stalled)
-      - TORRENT_HANDLING_REMOVE_STALLED=true
-      # Remove slow torrents (speed limit defined below)
-      - TORRENT_HANDLING_REMOVE_SLOW=true
-      # Remove torrents NOT found in Arrs history (Orphans). 
-      # CAUTION: Set to false if you use manual imports often.
-      - TORRENT_HANDLING_REMOVE_ORPHANS=false
-      
-      # --- Cleaner: Logic & Thresholds ---
-      # How many "Strikes" (checks) before deleting a bad torrent?
-      - TORRENT_HANDLING_MAX_STRIKES=3
-      # Minimum speed in KB/s. Below this = Strike.
-      - TORRENT_HANDLING_REMOVE_SLOW_MIN_SPEED=100
-      
-      # --- Cleaner: Timeouts (Minutes) ---
-      # How many minutes to wait for Metadata before giving a strike
-      - TIMEOUT_METADATA_MINUTES=15
-      # How many minutes to wait for Stalled (0 seeds) before giving a strike
-      - TIMEOUT_STALLED_MINUTES=15
-
-      # --- Cleaner: Tags & Protection ---
-      # Comma separated tags for Private Trackers.
-      # These will NOT be deleted, but tagged as obsolete.
-      - TORRENT_HANDLING_PRIVATE_TRACKER_TAGS=private,ipt,tl
-      # The tag to apply to Private torrents when they fail checks (instead of deleting)
-      - TORRENT_HANDLING_OBSOLETE_TAG=private-trackers
-      # Comma separated tags. If a torrent has this tag, it is NEVER touched.
-      - TORRENT_HANDLING_PROTECTED_TAG=protected,Keep,Upload
-      
       # --- Sonarr Configuration ---
       - SONARR_URL=${SONARR_URL}
       - SONARR_API_KEY=${SONARR_API_KEY}
-      - SONARR_LIMIT=10                # Items to search per run
-      - SONARR_CUTOFF_LIMIT=0          # 0=Disabled. >0 means search for upgrades.
       
       # --- Radarr Configuration ---
       - RADARR_URL=${RADARR_URL}
       - RADARR_API_KEY=${RADARR_API_KEY}
-      - RADARR_LIMIT=10
-      - RADARR_CUTOFF_LIMIT=0
       
       # --- Lidarr Configuration ---
       # Lidarr is fully supported (Cleaner + Searcher)
       - LIDARR_URL=${LIDARR_URL}
       - LIDARR_API_KEY=${LIDARR_API_KEY}
-      - LIDARR_LIMIT=10
-      - LIDARR_CUTOFF_LIMIT=0
       
       # --- Bazarr Configuration ---
       # Bazarr (Searcher Only)

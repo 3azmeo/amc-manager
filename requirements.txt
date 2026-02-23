@@ -1,3 +1,15 @@
+# ------------------------------------------------------------------------------
+# PYTHON DEPENDENCIES FOR AMC 
+# ------------------------------------------------------------------------------
+
+# Required for making HTTP API calls to Sonarr, Radarr, Lidarr, Bazarr, etc.
 requests
+
+# Required for the cyclic scheduling of Hunter and Cleaner tasks
 schedule
+
+# Official Python wrapper for communicating with the qBittorrent API
 qbittorrent-api
+
+# NEW FOR V3: Required to read and parse the dynamic config.yml file
+PyYAML

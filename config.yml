@@ -1,0 +1,261 @@
+# ==============================================================================
+# ARR MISSING CONTENT MANAGER (V3) - CONFIGURATION FILE
+# Developed by: 3azmeo
+# ==============================================================================
+# INSTRUCTIONS:
+# - Use "true" to enable a feature, or "false" to disable it.
+# - Do not use quotes around numbers or true/false.
+# - Paths should be exactly as they are mapped inside your Docker container.
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. CORE SYSTEM SETTINGS
+# ------------------------------------------------------------------------------
+
+# Set to true to run the script safely without modifying or deleting any files
+dry_run: true
+
+# Set the logging output level (INFO for standard details, DEBUG for deep troubleshooting)
+log_level: INFO
+
+# Set your timezone to ensure logs and timers are accurate
+timezone: Asia/Kuwait
+
+# Time (in seconds) to wait for Arrs/qBittorrent to respond before giving up
+enable_api_timeout: true
+api_timeout_seconds: 300
+
+
+# ------------------------------------------------------------------------------
+# 2. THE HUNTER (MISSING CONTENT SEARCHER)
+# ------------------------------------------------------------------------------
+# This module continuously scans your library for missing episodes and movies.
+# Instead of aggressively hitting indexers, it runs in a loop and respects 
+# API limits to prevent bans. If an item is missing, the Hunter will find it.
+
+# Master switch to turn the Hunter on or off
+enable_hunter: true
+
+# How often (in minutes) should the Hunter search for missing media?
+enable_run_every_minutes: true
+run_every_minutes: 15
+
+# Delay (in seconds) between each API call to prevent getting banned by trackers
+enable_request_delay_seconds: true
+request_delay_seconds: 5
+
+# Reset the search cycle memory after this many days
+enable_max_cycle_days: true
+max_cycle_days: 30
+
+
+# ------------------------------------------------------------------------------
+# 3. THE CLEANER (TORRENT QUEUE MANAGER)
+# ------------------------------------------------------------------------------
+
+# Master switch to turn the Cleaner on or off
+enable_cleaner: true
+
+# How often (in minutes) should the Cleaner check qBittorrent?
+enable_torrent_handling_timer: true
+torrent_handling_timer_minutes: 20
+
+# How many "strikes" a torrent gets before it is deleted/blocked
+enable_max_strikes: true
+max_strikes: 3
+
+# --- Cleaner Toggles ---
+
+# Delete torrents that have bad or corrupted files?
+enable_remove_bad_files: true
+
+# Delete torrents that completely failed to download?
+enable_remove_failed_download: true
+
+# Delete torrents stuck on "Downloading Metadata"?
+enable_remove_metadata_missing: true
+
+# Delete torrents with 0 seeders (Stalled)?
+enable_remove_stalled: true
+
+# Delete torrents that are downloading very slowly?
+enable_remove_slow: true
+
+# Delete torrents that exist in qBittorrent but NOT in Sonarr/Radarr history?
+enable_remove_orphans: false
+
+# --- Cleaner Thresholds & Timeouts ---
+
+# Minimum speed (in KB/s). Torrents slower than this will get a strike.
+enable_remove_slow_min_speed: true
+remove_slow_min_speed_kbps: 100
+
+# Wait time (in minutes) before giving a strike to "Metadata Missing" torrents
+enable_timeout_metadata_minutes: true
+timeout_metadata_minutes: 15
+
+# Wait time (in minutes) before giving a strike to "Stalled" (0 seeds) torrents
+enable_timeout_stalled_minutes: true
+timeout_stalled_minutes: 15
+
+# --- Cleaner Tags & Protections ---
+
+# Tags used for Private Trackers. The system will NOT delete these, only tag them.
+enable_private_tracker_tags: true
+private_tracker_tags: private,ipt,tl,private-tracker
+
+# Tag to apply to Private Tracker torrents when they fail (instead of deleting them)
+enable_obsolete_tag: true
+obsolete_tag: amc_obsolete
+
+# Tags that protect a torrent. The system will completely ignore torrents with these tags.
+enable_protected_tags: true
+protected_tags: protected,Keep,Upload
+
+
+# ------------------------------------------------------------------------------
+# 4. V3 ADVANCED FEATURES (SMART ROUTING & BATCHES)
+# ------------------------------------------------------------------------------
+# This section handles complex scenarios where Arrs get stuck.
+# It can dissect large season packs (Anime, Series, or Movies) episode-by-episode 
+# to import only what you are missing or upgrade existing files. 
+# It also routes incorrectly categorized media (e.g., a movie stuck in Sonarr) 
+# to the correct application (Radarr).
+
+# Master switch: Dissect stuck batches (Anime, Movies, Series) and import missing/upgraded files automatically
+enable_smart_batch_dissector: true
+
+# Master switch: Move wrong media to the correct App (e.g., Movie in Sonarr -> sent to Radarr)
+enable_cross_arr_routing: true
+
+
+# ------------------------------------------------------------------------------
+# 5. MANUAL UPLOADS AUTO-IMPORTER
+# ------------------------------------------------------------------------------
+# Drop your downloaded media into the specified folders, and this module will
+# route them to Sonarr/Radarr. The Arrs will process the files, grab them if they 
+# are missing, or upgrade existing ones if the new score is better. Unwanted or 
+# unrecognized files are kept for a set time, then cleaned up automatically.
+# NOTE: If enable_manual_import_auto is set to false, this entire block is ignored.
+
+# Master switch: Automatically import media placed in the manual folders
+enable_manual_import_auto: true
+
+# How often (in minutes) to check the manual import folders
+enable_manual_import_scan_interval: true
+manual_import_scan_interval_minutes: 5
+
+# Location inside the Docker container where you drop files to be imported
+enable_manual_import_location: true
+manual_import_location: /data/manual-import
+
+# --- Failed Import Cleanup ---
+# Should we delete/clean files that failed to import?
+enable_failed_retention: true
+
+# How long (in minutes) to keep failed files before deleting them (e.g., 180 = 3 hours)
+enable_failed_retention_minutes: true
+failed_retention_minutes: 180
+
+# ==============================================================================
+# AUTO-ADD MISSING MEDIA (V3.4)
+# ==============================================================================
+# Enable or disable the Auto-Add feature entirely
+enable_auto_add: true
+
+# --- Sonarr Auto-Add Defaults ---
+# Type the EXACT name of the profile (e.g., 'Any', 'best', 'HD-1080p')
+auto_add_sonarr_standard_profile_name: "best"
+auto_add_sonarr_standard_root_folder: "/data/tv-shows"
+
+auto_add_sonarr_anime_profile_name: "best"
+auto_add_sonarr_anime_root_folder: "/data/anime/series"
+
+# --- Radarr Auto-Add Defaults ---
+auto_add_radarr_standard_profile_name: "best"
+auto_add_radarr_standard_root_folder: "/data/movies"
+
+auto_add_radarr_anime_profile_name: "best"
+auto_add_radarr_anime_root_folder: "/data/anime/movies"
+
+# ------------------------------------------------------------------------------
+# 6. PROFILES, LANGUAGES & SUBTITLES
+# ------------------------------------------------------------------------------
+# Automates the setup of Quality Profiles inside Sonarr and Radarr.
+# It can build optimal profiles based on TRaSH Guides or use the custom AMC
+# all-in-one profile. It also enforces your preferred languages and subtitles priorities.
+
+# Automatically create the 4 optimal profiles (Anime/Non-Anime) in Sonarr/Radarr
+enable_make_trashguide_profiles: false
+
+# Automatically create the ultimate all-in-one profile (AMC Profile)
+enable_make_amc_profile: false
+
+# Define preferred languages in order of priority (comma separated)
+enable_preferred_languages: true
+preferred_languages: original,english,arabic
+
+# Define preferred subtitles in order of priority (comma separated)
+enable_preferred_subtitles: true
+preferred_subtitles: english,arabic
+
+# ==============================================================================
+# TRaSH GUIDES CACHE SYNC 
+# ==============================================================================
+# Enable daily fetching of the latest Custom Formats and Profiles from GitHub
+enable_trash_guide_sync: true
+
+
+# ------------------------------------------------------------------------------
+# 7. TRASH GUIDES & AMC SCORES
+# ------------------------------------------------------------------------------
+# Automates the synchronization of Custom Formats (Regex) and Scores.
+# It can pull the latest definitions from TRaSH Guides to ensure your Arrs 
+# always recognize new release formats (like Dolby Vision or new Web-DLs).
+# You can choose to use TRaSH scores, the built-in AMC scores, or your own custom scores.
+
+# Fetch and update Custom Formats (Regex) from TRaSH Guides
+# NOTE: If format is missing, it adds it. If it exists, it only updates the Regex, NOT the score.
+# If enabled, it tries to update them from TRaSH Guides first. If offline, it falls back to hardcoded.
+enable_sync_custom_trashguide_format: false
+
+# Use hardcoded AMC custom formats. 
+enable_sync_custom_AMC_format: true
+
+# Enable this if you want to use your own manually created custom formats
+enable_custom_format: false
+
+# Fetch and update the Scores based on TRaSH Guides recommendations
+# If enabled, it tries to update them from TRaSH Guides first. If offline, it falls back to hardcoded.
+enable_sync_trash_guide_score: false
+
+# Use the Official AMC (3azmeo) Scores by default
+enable_sync_amc_score: true
+
+# Enable this if you want to use your own customized scores
+enable_custome_score: false
+
+# ------------------------------------------------------------------------------
+# 8. SEARCH LIMITS & CUTOFFS
+# ------------------------------------------------------------------------------
+# Control how many items are searched per cycle to avoid API bans.
+# Cutoff: 0 = Disabled. >0 means search for quality upgrades.
+
+enable_sonarr_limits: true
+sonarr_search_limit: 10
+sonarr_cutoff_limit: 0
+
+enable_radarr_limits: true
+radarr_search_limit: 10
+radarr_cutoff_limit: 0
+
+enable_lidarr_limits: true
+lidarr_search_limit: 10
+lidarr_cutoff_limit: 0
+
+# ==============================================================================
+# BUILT-IN EXTRACTION (UNPACKING)
+# ==============================================================================
+# WARNING: It is HIGHLY recommended to use a dedicated external app like 'Unpackerr'.
+# Enabling this will require extra dependencies and might cause conflicts.
+enable_builtin_extraction: false

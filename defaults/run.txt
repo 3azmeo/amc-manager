@@ -1,0 +1,2 @@
+to run the script use the comand
+python3 trash_downloader.py
